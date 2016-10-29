@@ -1,0 +1,37 @@
+L1 = [5, 2, 7, 4, 6, 3, 1]
+
+def bubblesort1(seq):
+    print(seq)
+    n = len(seq)
+    itr1= 0
+
+    while(n > 1):
+        for j in range(n-1):
+            if seq[j] > seq[j+1]:
+                seq[j], seq[j+1] = seq[j+1], seq[j]
+        itr1= itr1+ 1
+        print("iter: %d " %itr1)
+        print(seq)
+        n = n-1
+
+bubblesort1(L1)
+
+L2 = [5, 2, 7, 4, 6, 3, 1]
+
+def bubblesort2(seq):
+    print(seq)
+    iSorted = False
+    n = len(seq)
+    itr2 = 0
+
+    while(iSorted == False):
+        iSorted = True
+        for i in range(n-1):
+            if seq[i] > seq[i+1]:
+                seq[i], seq[i+1] = seq[i+1], seq[i]
+                iSorted = False
+                itr2 = itr2+ 1
+        print("iter: %d" %itr2)
+        print(seq)
+
+bubblesort2(L2)
