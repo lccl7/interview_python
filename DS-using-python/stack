@@ -1,0 +1,92 @@
+class Stack():
+
+    def __init__(self):
+        self.vec = []
+    def push(self, item):
+        self.vec.append(item)
+
+    def pop(self):
+        self.vec.pop()
+
+    def top(self):
+        return self.vec[len(self.vec) - 1]
+
+    def is_empty(self):
+        return self.vec == []
+
+    def size(self):
+        return len(self.vec)
+
+'''
+#convert num to different base
+def convert1(stk, num, base):
+    digit = ['0', '1', '2', '3', '4', '5', '6', '7',
+            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']
+    if num > 0:
+        stk.push(digit[num % base])
+        convert(stk, num // base, base)
+
+def convert2(stk, num, base):
+    digit = ['0', '1', '2', '3', '4', '5', '6', '7',
+            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']
+    while num > 0:
+        stk.push(digit[num % base])
+        num  = num // base
+
+
+s = Stack()
+n= []
+convert2(s, 12345, 8)
+while s.is_empty() == False:
+    n.append(s.top())
+    s.pop()
+print(n)
+'''
+
+#stack permutation
+def permutationstacks(stk1, stk2):
+    tmp1 = Stack()
+    tmp2 = Stack()
+    while stk2.is_empty() == False:
+        tmp2.push(stk2.top())
+        stk2.pop()
+
+    while stk1.is_empty() == False or (tmp1.is_empty() == False and tmp1.top() == tmp2.top()):
+        if tmp1.is_empty() == False and tmp1.top() == tmp2.top():
+            stk2.push(tmp1.top())
+            tmp1.pop()
+            tmp2.pop()
+        else:
+            tmp1.push(stk1.top())
+            stk1.pop()
+#        print(stk1.vec)
+#        print(tmp1.vec)
+#        print(tmp2.vec)
+#        print('\n')
+    if stk1.is_empty() == True and tmp1.is_empty() == True:
+        return True
+    return False
+
+def permutationstk():
+    s = Stack()
+    s.vec = [4, 3, 2, 1]
+    s1 = Stack()
+    s1.vec = [3, 2, 4, 1]
+    s2 = Stack()
+    s2.vec = [1, 2, 3, 4]
+    print(permutationstacks(s, s1))
+    print(permutationstacks(s, s2))
+
+'''
+s = Stack()
+print(s.is_empty())
+s.push(4)
+s.push('dog')
+print(s.top())
+print(s.size())
+s.pop()
+s.top()
+print(s.size())
+'''
+if __name__ == '__main__':
+    permutationstk()
