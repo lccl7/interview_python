@@ -1,0 +1,107 @@
+class BinHeap():
+    def __init__(self):
+        self.heaplist = [0]
+        self.heapsize = 0
+    def Left(self, i):
+        return 2*i
+    def Right(self, i):
+        return 2*i+1
+    def Parent(self, i):
+        return i // 2
+
+    def Max_Heapify(self, i):
+        l = self.Left(i)
+        r = self.Right(i)
+        largest = i
+        if l <= self.heapsize and self.heaplist[i] < self.heaplist[l]:
+            largest = l
+        if r <= self.heapsize and self.heaplist[largest] < self.heaplist[r]:
+            largest = r
+        if largest != i:
+            self.heaplist[i], self.heaplist[largest] = self.heaplist[largest], self.heaplist[i]
+            self.Max_Heapify(largest)
+
+    def Min_Heapify(self, i):
+        p = self.Parent(i)
+        if p > 0 and self.heaplist[i] < self.heaplist[p]:
+            self.heaplist[i], self.heaplist[p] = self.heaplist[p], self.heaplist[i]
+        if p > 1:
+            self.Min_Heapify(p)
+
+    def BuildMaxHeap(self,seq):
+        self.heapsize = len(seq)
+        self.heaplist = [0] + seq[:]
+        i = self.heapsize // 2
+        while i > 0:
+            self.Max_Heapify(i)
+            i -= 1
+
+    def BuildMinHeap(self, seq):
+        self.heapsize = len(seq)
+        self.heaplist = [0] + seq[:]
+        i = self.heapsize // 2
+        while i <= self.heapsize :
+            self.Min_Heapify(i)
+            i += 1
+
+    def HeapSort(self, seq):
+        self.BuildMaxHeap(seq)
+        i = self.heapsize
+        while i > 0:
+            self.heaplist[1], self.heaplist[i] = self.heaplist[i], self.heaplist[1]
+            seq[i-1] = self.heaplist[i]
+            self.heapsize -= 1
+            self.Max_Heapify(1)
+            i -= 1
+        return seq
+
+    def HeapExtractMax(self):
+        if self.heapsize < 1:
+            return 0
+        maxele, self.heaplist[1] = self.heaplist[1], self.heaplist[self.heapsize]
+        self.heapsize -= 1
+        self.Max_Heapify(1)
+        return maxele
+
+    def Heap_Increase_Key(self, i, key):
+        if key < self.heaplist[i]:
+            return
+        self.heaplist[i] = key
+        while i > 1 and self.heaplist[self.Parent(i)] < self.heaplist[i]:
+            self.heaplist[i], self.heaplist[self.Parent(i)] = self.heaplist[self.Parent(i)], self.heaplist[i]
+            i = self.Parent(i)
+
+    def Max_Heap_Insert(self, key):
+        self.heapsize += 1
+        self.heaplist.append(0)
+        self.Heap_Increase_Key(self.heapsize, key)
+
+
+print("test max_heapify")
+arr = [5, 13, 2, 25, 7, 17, 20, 8, 4]
+bh1 = BinHeap()
+bh1.BuildMaxHeap(arr)
+print(bh1.heaplist)
+bh1.Max_Heap_Insert(30)
+print(bh1.heaplist)
+print(bh1.HeapExtractMax())
+#print(bh1.HeapSort(arr))
+#bh1.BuildMinHeap(arr)
+
+arr = [16, 4, 10, 14, 7, 9, 3, 2, 8, 1]
+bh2 = BinHeap()
+#print(bh2.HeapSort(arr))
+bh2.BuildMaxHeap(arr)
+print(bh1.heaplist)
+bh2.Max_Heap_Insert(30)
+print(bh2.heaplist)
+print(bh2.HeapExtractMax())
+#print(bh2.heaplist)
+#bh2.BuildMinHeap(arr)
+
+arr = [5, 3, 17, 10, 84, 19, 6, 22, 9]
+bh3 = BinHeap()
+bh3.BuildMaxHeap(arr)
+print(bh3.heaplist)
+bh3.BuildMinHeap(arr)
+print(bh3.heaplist)
