@@ -1,0 +1,140 @@
+class BinaryTree():
+    def __init__(self, val, parent = None, left = None, right = None):
+        self.parent = parent
+        self.value = val
+        self.left = left
+        self.right = right
+
+def Recur_Search(root, val):
+    if root.value == None or root.value == val:
+        return root
+    if val < root.value:
+        return recur_search(root.left, val)
+    else:
+        return recur_search(root.right, val)
+
+def Iter_Search(root, val):
+    while root.value != None and val != root.value:
+        if val < root.value:
+            root = root.left
+        else:
+            root = root.right
+    return root
+
+def MinofTree(root):
+    while root.left != None:
+        root = root.left
+    return root
+
+def Recur_MinofTree(root):
+    if root == None or root.left == None:
+        return root
+    else:
+        return Recur_MinofTree(root.left)
+
+def MaxofTree(root):
+    while root.right != None:
+        root = root.right
+    return root
+
+def Recur_MaxofTree(root):
+    if root == None or root.right == None:
+        return root
+    else:
+        return Recur_MaxofTree(root.right)
+
+def InorderTreeWalk(root):
+    if root != None:
+        InorderTreeWalk(root.left)
+        print(root.value, end=' ' )
+        InorderTreeWalk(root.right)
+
+# if the right subtree of node is nonempty, then the Successor
+# of x is the leftmost node in the right subtree, if the right
+# subtree of node is empty and x has a Successor y, then y is the
+# lowest ancestor of x whose left child is also an ancestor of x
+def Successor(root):
+    if root.right != None:
+        return MinofTree(root.right)
+    suc = root.parent
+    while suc != None and root == suc.right:
+        root = suc
+        suc = suc.parent
+    return suc
+
+def Predecessor(root):
+    if root.left != None:
+        return MaxofTree(root.right)
+    pre = root.parent
+    while pre != None and root == pre.left:
+        root = pre
+        pre = pre.left
+    return pre
+
+#def Recur_Insert(root, val):
+#    if root == None:
+#        key = BinaryTree(val)
+#        root = key
+#    elif val < root.value:
+#        Recur_Insert(root.left, val)
+#        print('left')
+#        print(root.left)
+#    else:
+#        Recur_Insert(root.right, val)
+#        print('right')
+
+def TreeInsert(root, val):
+    key = BinaryTree(val)
+    p = None
+    while root != None:
+        p = root
+        if key.value < root.value:
+            root = root.left
+        else:
+            root = root.right
+    key.parent = p
+    if p == None:
+        root = key
+    elif key.value < p.value:
+        p.left = key
+    else:
+        p.right = key
+
+def TreeDelete(root, val):
+    key = Iter_Search(root, val)
+    if key == None:
+        return None
+    d = None
+    if key.left == None or key.right == None:
+        d = key
+    else:
+        d = Successor(key)
+    if d.left != None:
+        cd = d.left
+    else:
+        cd = d.right
+    if cd != None:
+        cd.parent = d.parent
+    if d.parent == None:
+        root = cd
+    elif d == d.parent.left:
+        d.parent.left = x
+    else:
+        d.parent.right = x
+    if d != key:
+        key.value = d.value
+    return d
+
+L = [3, 5, 6, 7, 10, 12, 13, 16, 18, 20, 23]
+root = BinaryTree(15)
+for i in L:
+#    Recur_Insert(root, i)
+    TreeInsert(root, i)
+InorderTreeWalk(root)
+print(root.left.value)
+print(Successor(root.left).value)
+print(Predecessor(root.left.right).value)
+print(MinofTree(root).value)
+print(MaxofTree(root).value)
+print(Recur_MinofTree(root).value)
+print(Recur_MaxofTree(root).value)
