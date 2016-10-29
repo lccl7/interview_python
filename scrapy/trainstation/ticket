@@ -1,0 +1,97 @@
+#coding: utf-8
+""" Train tickets query via command-line
+
+Usage:
+    tickets [-gdtkz] <from> <to> <date>
+
+Options:
+    -h, --help      Help Menu
+    -g              GaoSu
+    -d              DongChe
+    -t              TeKuai
+    -k              KuaiSu
+    -z              ZhiDa
+
+Example:
+    tickets beijing shenzhen 2016-10-10
+"""
+
+from docopt import docopt
+from stations import stations
+import requests
+from prettytable import PrettyTable
+
+def colored(color, text):
+    table = {
+            'Red': '\033[91m',
+            'Green': '\033[92m',
+            'Yellow':'\033[33m',
+            'Blue':'\033[34m',
+            'Fuchsia':'\033[35m',
+            'Cyan':'\033[36m',
+            'White':'\033[37m',
+            'rest': '\033[0m'
+            }
+    cv = table.get(color)
+    rest = table.get('rest')
+    return '{}{}{}'.format(cv, text, rest)
+
+
+class TrainCollection():
+    TrainAttr = 'train station time duration first second softsleep hardsleep hardsit'
+    header = []
+    for attr in TrainAttr.split():
+        header.append(''.join(colored('Cyan', attr)))
+    
+    def __init__(self, rows):
+        self.rows = rows
+
+    def _get_duration(self, row):
+        duration = row.get('lishi').replace(':', 'h')+'m'
+        if duration.startswith('00'):
+            return duration[4:]
+        if duration.startswith('0'):
+            return duration[1:]
+        return duration
+
+    @property
+    def trains(self):
+        for row in self.rows:
+            train = [
+                    row['station_train_code'],
+                    '\n'.join([colored('Green',row['from_station_name']),
+                            colored('Red', row['to_station_name'])]),
+                    '\n'.join([colored('Green', row['start_time']), 
+                            colored('Red', row['arrive_time'])]),
+                    self._get_duration(row),
+                    row['zy_num'],
+                    row['ze_num'],
+                    row['rw_num'],
+                    row['yw_num'],
+                    row['yz_num']
+                    ]
+            yield train
+    
+    def pretty_print(self):
+        pt = PrettyTable()
+        pt._set_field_names(self.header)
+        for train in self.trains:
+            pt.add_row(train)
+        print(pt)
+
+
+def cli():
+    arguments = docopt(__doc__)
+    from_station = stations.get(arguments['<from>'])
+    to_station = stations.get(arguments['<to>'])
+    date = arguments['<date>']
+
+    url = 'https://kyfw.12306.cn/otn/lcxxcx/query?purpose_codes=ADULT&queryDate={}&from_station={}&to_station={}'.format(date, from_station, to_station)
+    r = requests.get(url, verify=False)
+    rows = r.json()['data']['datas']
+    trains = TrainCollection(rows)
+    trains.pretty_print()
+
+
+if __name__ == '__main__':
+    cli()
